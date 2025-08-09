@@ -1,43 +1,41 @@
-import { tweetsData }  from "./data.js";
+import { tweetsData } from "./data.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 
-uuidv4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
-
 let text = document.getElementById('textarea')
-document.addEventListener('click', function(e){
-    if(e.target.dataset.like){
+
+document.addEventListener('click', function (e) {
+    if (e.target.dataset.like) {
         handleLike(e.target.dataset.like);
         render()
     }
 
-    else if(e.target.dataset.retweet) {
+    else if (e.target.dataset.retweet) {
         handRetweet(e.target.dataset.retweet);
         render();
     }
 
-    else if(e.target.dataset.comment){
+    else if (e.target.dataset.comment) {
         handleComment(e.target.dataset.comment);
         // render()
     }
-    
+
 })
 
-function newPost(){
-    document.getElementById("btn").addEventListener('click', function() {
+function newPost() {
+    document.getElementById("btn").addEventListener('click', function () {
         let textAreaValue = text.value;
         text.value = ""
-        // console.log(textAreaValue)
-        
+
         let newPerson = {
-          handle: `@scrim💎`,
-          profilePic: `images/scrimbalogo.png`,
-          likes: 0,
-          retweets: 0,
-          tweetText: `${textAreaValue}`,
-          replies: [],
-          isLiked: false,
-          isRetweeted: false,
-          uuid: uuidv4(), // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+            handle: `@scrim💎`,
+            profilePic: `images/scrimbalogo.png`,
+            likes: 0,
+            retweets: 0,
+            tweetText: `${textAreaValue}`,
+            replies: [],
+            isLiked: false,
+            isRetweeted: false,
+            uuid: uuidv4(), // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         };
 
         tweetsData.unshift(newPerson);
@@ -46,35 +44,35 @@ function newPost(){
 }
 
 newPost();
- 
 
-function handleComment(tweetId){
+
+function handleComment(tweetId) {
     document.getElementById(`replies-${tweetId}`).classList.toggle("hidden");
 }
 
 
-function handleLike(tweetId){
-    const filtering = tweetsData.filter(function(element){
-      return  element.uuid.includes(tweetId);
+function handleLike(tweetId) {
+    const filtering = tweetsData.filter(function (element) {
+        return element.uuid.includes(tweetId);
     })[0]
 
-    if(filtering.isLiked){
+    if (filtering.isLiked) {
         filtering.likes--;
-    } else{
+    } else {
         filtering.likes++;
     }
 
     filtering.isLiked = !filtering.isLiked;
 }
 
-function handRetweet(tweetId){
-    const filtering = tweetsData.filter(function(element){
-      return  element.uuid.includes(tweetId);
+function handRetweet(tweetId) {
+    const filtering = tweetsData.filter(function (element) {
+        return element.uuid.includes(tweetId);
     })[0]
 
-    if(filtering.isRetweeted){
+    if (filtering.isRetweeted) {
         filtering.retweets--;
-    } else{
+    } else {
         filtering.retweets++;
     }
 
@@ -82,26 +80,25 @@ function handRetweet(tweetId){
 }
 
 
-function getFeedHtml(){
-  
-    
+function getFeedHtml() {
+
     let interfaces = ""
 
-     tweetsData.forEach(function (element) {
+    tweetsData.forEach(function (element) {
         let likeEmoji = "";
-         let retweetEmoji = "";
+        let retweetEmoji = "";
         if (element.isLiked) {
-          likeEmoji = "liked";
+            likeEmoji = "liked";
         }
 
         if (element.isRetweeted) {
-          retweetEmoji = "retweet";
+            retweetEmoji = "retweet";
         }
 
 
         let repliesHtml = "";
-        if(element.replies.length > 0) {
-            element.replies.forEach(function(reply) {
+        if (element.replies.length > 0) {
+            element.replies.forEach(function (reply) {
                 repliesHtml += `
                     <div class = 'comment'>
                         <div class = 'inner'>
@@ -112,13 +109,13 @@ function getFeedHtml(){
                             </div>
                         </div>
                     </div>
-                `
+                `;
             })
         }
 
 
 
-    
+
 
 
 
@@ -147,18 +144,24 @@ function getFeedHtml(){
                 </div>
             </div> 
             
-            <div class="hidden" id="replies-${element.uuid}">${repliesHtml}</div>
+            <div class="hidden" id="replies-${element.uuid}">
+                 <div class = "input">
+                    <textarea name="textarea" id="textarea" placeholder="Your coment?"></textarea>
+                    <button id="btn">reply</button>
+                 </div>
+                 ${repliesHtml}
+            </div>
         </div> 
         `;
-      });
+    });
 
-      return interfaces
+    return interfaces
 }
 
 
 // 
 
-function render(){
+function render() {
     document.getElementById("main").innerHTML = getFeedHtml()
 }
 
