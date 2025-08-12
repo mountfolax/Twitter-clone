@@ -1,7 +1,11 @@
 import { tweetsData } from "./data.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 
+// localStorage.setItem('tweet', JSON.stringify(tweetsData));
+
 let text = document.getElementById('textarea')
+// let value = document.getElementById('comment-textarea')
+// let btns = document.getElementById('btns')
 
 document.addEventListener('click', function (e) {
     if (e.target.dataset.like) {
@@ -44,6 +48,36 @@ function newPost() {
 }
 
 newPost();
+
+function commentReplies(){
+
+    tweetsData.forEach(function(element){
+        document.getElementById(`btns-${element.uuid}`).addEventListener("click", function () {
+            let textArea = document.getElementById(`textarea-${element.uuid}`);
+            let newComent = {
+              handle: `@jamess💎`,
+              profilePic: `images/scrimbalogo.png`,
+              likes: 0,
+              retweets: 0,
+              tweetText: `${textArea.value}`,
+              replies: [],
+              isLiked: false,
+              isRetweeted: false,
+              uuid: uuidv4(), // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+            };
+
+            let pushElement = element.replies.unshift(newComent)
+
+            if(pushElement){
+                // console.log(element.replies);
+                render()
+            }
+            // element.replies.push(newComent);
+        });
+        
+    })
+}
+
 
 
 function handleComment(tweetId) {
@@ -110,6 +144,7 @@ function getFeedHtml() {
                         </div>
                     </div>
                 `;
+                
             })
         }
 
@@ -146,8 +181,8 @@ function getFeedHtml() {
             
             <div class="hidden" id="replies-${element.uuid}">
                  <div class = "input">
-                    <textarea name="textarea" id="textarea" placeholder="Your coment?"></textarea>
-                    <button id="btn">reply</button>
+                    <textarea name="textarea" id= "textarea-${element.uuid}" class="textarea" placeholder="Your coment?"></textarea>
+                    <button class= "btns" id= "btns-${element.uuid}">reply</button>
                  </div>
                  ${repliesHtml}
             </div>
@@ -163,6 +198,8 @@ function getFeedHtml() {
 
 function render() {
     document.getElementById("main").innerHTML = getFeedHtml()
+     commentReplies();
+    
 }
 
 render()

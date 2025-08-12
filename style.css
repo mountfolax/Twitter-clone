@@ -206,7 +206,7 @@ i{
     font-size: 1.2rem;
 }
 
-.input #btn {
+.input .btns {
    background-color: #0f8ee1;
    color: white;
    border: none;
