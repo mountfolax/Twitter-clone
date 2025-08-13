@@ -1,11 +1,18 @@
 import { tweetsData } from "./data.js";
 import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 
-// localStorage.setItem('tweet', JSON.stringify(tweetsData));
+
+// localStorage.setItem('tweetData', JSON.stringify(tweetsData))
+let dataTweet = JSON.parse(localStorage.getItem('tweetData'))
+
+
+if (dataTweet) {
+    tweetsData.length = 0;
+    tweetsData.push(...dataTweet)
+}
+// console.log(DataTweet)
 
 let text = document.getElementById('textarea')
-// let value = document.getElementById('comment-textarea')
-// let btns = document.getElementById('btns')
 
 document.addEventListener('click', function (e) {
     if (e.target.dataset.like) {
@@ -20,10 +27,17 @@ document.addEventListener('click', function (e) {
 
     else if (e.target.dataset.comment) {
         handleComment(e.target.dataset.comment);
+    }
+
+    else if(e.target.dataset.icon){
+        handleDelete(e.target.dataset.icon);
         // render()
     }
 
 })
+
+
+
 
 function newPost() {
     document.getElementById("btn").addEventListener('click', function () {
@@ -43,6 +57,8 @@ function newPost() {
         };
 
         tweetsData.unshift(newPerson);
+        localStorage.setItem("tweetData", JSON.stringify(tweetsData));
+
         render()
     })
 }
@@ -51,7 +67,8 @@ newPost();
 
 function commentReplies(){
 
-    tweetsData.forEach(function(element){
+
+   tweetsData.forEach(function(element){
         document.getElementById(`btns-${element.uuid}`).addEventListener("click", function () {
             let textArea = document.getElementById(`textarea-${element.uuid}`);
             let newComent = {
@@ -67,12 +84,10 @@ function commentReplies(){
             };
 
             let pushElement = element.replies.unshift(newComent)
-
-            if(pushElement){
-                // console.log(element.replies);
-                render()
+           localStorage.setItem("tweetData", JSON.stringify(tweetsData));
+            if (pushElement) {
+                render();
             }
-            // element.replies.push(newComent);
         });
         
     })
@@ -112,6 +127,27 @@ function handRetweet(tweetId) {
 
     filtering.isRetweeted = !filtering.isRetweeted;
 }
+
+
+
+
+function handleDelete(tweetId) {
+  tweetsData.forEach(function (element) {
+    let btn = document.getElementById(`delete-${element.uuid}`);
+    if(element.uuid.includes(tweetId)){
+        btn.style.display = "inline";
+
+        btn.addEventListener('click', function(){
+            btn.style.display = 'none'
+        })
+
+    }
+
+  });
+}
+
+
+
 
 
 function getFeedHtml() {
@@ -156,12 +192,14 @@ function getFeedHtml() {
 
         interfaces += `
         <div class = "outro">
+          <button id="delete-${element.uuid}" class = "delete">Delete</button>
             <div class = "interface">
                 <img src = "${element.profilePic}">
+                
                 <div class = "plain">
                     <p class = "handle"> ${element.handle}</p>
                     <p class = "tweet"> ${element.tweetText}</p>
-
+                    
                     <div class = "tweet-details">
                         <span class = "tweet_detail">
                             <i class="fa-regular fa-comment-dots" data-comment="${element.uuid}" id= "comment"></i>
@@ -175,6 +213,8 @@ function getFeedHtml() {
                             <i class="fa-solid fa-retweet ${retweetEmoji}" data-retweet="${element.uuid}"></i>
                             <span>${element.retweets}</span>
                         </span>
+
+                        <i class="fa-solid fa-ellipsis-vertical" data-icon="${element.uuid}"></i>
                     </div>
                 </div>
             </div> 
