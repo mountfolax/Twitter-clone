@@ -10,7 +10,7 @@ if (dataTweet) {
     tweetsData.length = 0;
     tweetsData.push(...dataTweet)
 }
-// console.log(DataTweet)
+
 
 let text = document.getElementById('textarea')
 
@@ -139,6 +139,9 @@ function handleDelete(tweetId) {
 
         btn.addEventListener('click', function(){
             btn.style.display = 'none'
+            tweetsData.shift(element)
+            localStorage.setItem("tweetData", JSON.stringify(tweetsData));
+            render()
         })
 
     }
